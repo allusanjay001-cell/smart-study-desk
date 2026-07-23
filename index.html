@@ -5,78 +5,194 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Smart Study Desk</title>
 <style>
-  :root{--ink:#1B2430;--panel:#232F3E;--brass:#C9A227;--teal:#3E6259;--parchment:#F2EFE9;--red:#C1443A;--blue:#3E6B8A;--muted:#8B94A3;}
+  :root{--ink:#14191F;--panel:#1E2530;--brass:#D4A947;--teal:#4A8577;--parchment:#F2EFE9;--red:#D1574C;--blue:#5B8FB9;--muted:#7C8798;}
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--ink);color:var(--parchment);font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;max-width:520px;margin:0 auto;}
-  h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:26px;margin:0 0 4px 0;}
-  .eyebrow{color:var(--brass);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;}
-  .card{background:var(--panel);border-radius:10px;padding:20px 24px;margin-bottom:16px;border:1px solid #2E3B4C;}
-  .big-number{font-family:'Courier New',monospace;font-size:48px;color:var(--brass);line-height:1;}
-  .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
-  .ring{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:14px;border:4px solid var(--muted);margin:0 auto 12px auto;transition:border-color .3s,color .3s;}
-  .btn{display:inline-block;background:var(--teal);color:var(--parchment);border:1px solid #4A7168;padding:12px 22px;border-radius:6px;font-size:14px;margin-right:10px;cursor:pointer;}
-  .btn.off{background:transparent;color:var(--muted);border:1px solid #3A4757;}
-  table{width:100%;border-collapse:collapse;}
-  td,th{padding:8px;text-align:left;border-bottom:1px solid #2E3B4C;font-size:14px;}
-  th{color:var(--muted);font-weight:400;text-transform:uppercase;font-size:11px;letter-spacing:1px;}
-  input{background:var(--ink);border:1px solid #3A4757;color:var(--parchment);padding:8px 10px;border-radius:6px;font-size:13px;width:160px;}
+  body{margin:0;background:var(--ink);color:var(--parchment);font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:20px;max-width:520px;margin:0 auto;}
+  h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:26px;margin:0;}
+  .eyebrow{color:var(--brass);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
+  .gear{background:var(--panel);border:1px solid #2E3B4C;color:var(--muted);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:18px;}
+  .tabs{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;}
+  .tab{background:var(--panel);border:1px solid #2E3B4C;color:var(--muted);padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer;white-space:nowrap;}
+  .tab.active{color:var(--brass);border-color:var(--brass);}
+  .page{display:none;} .page.active{display:block;}
+  .card{background:var(--panel);border-radius:10px;padding:18px 20px;margin-bottom:14px;border:1px solid #2E3B4C;}
+  .big-number{font-family:'Courier New',monospace;font-size:44px;color:var(--brass);line-height:1;}
+  .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .ring{width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:13px;border:4px solid var(--muted);margin:0 auto 10px auto;transition:.3s;}
+  .btn{display:inline-block;background:var(--teal);color:var(--parchment);border:1px solid #4A7168;padding:10px 18px;border-radius:6px;font-size:13px;margin-right:8px;margin-bottom:8px;cursor:pointer;}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid #3A4757;}
+  .btn.active{background:var(--brass);color:var(--ink);border-color:var(--brass);}
+  table{width:100%;border-collapse:collapse;} td,th{padding:8px;text-align:left;border-bottom:1px solid #2E3B4C;font-size:13px;}
+  th{color:var(--muted);font-weight:400;text-transform:uppercase;font-size:10px;letter-spacing:1px;}
+  input,select{background:var(--ink);border:1px solid #3A4757;color:var(--parchment);padding:8px 10px;border-radius:6px;font-size:13px;}
   .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
   .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+  .swatch{width:32px;height:32px;border-radius:6px;cursor:pointer;border:2px solid transparent;display:inline-block;margin:2px;}
+  .swatch.sel{border-color:var(--brass);}
+  .modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:10;}
+  .modal-bg.show{display:flex;}
+  .modal{background:var(--panel);border-radius:10px;padding:24px;max-width:400px;width:90%;border:1px solid #2E3B4C;}
+  .subj-row{display:flex;gap:6px;margin-bottom:6px;}
+  input[type=range]{width:100%;}
 </style>
 </head>
 <body>
-  <div class="eyebrow">Smart Study Desk &middot; CA THARUN</div>
-  <h1>Desk control</h1>
+  <div class="topbar">
+    <div><div class="eyebrow">Smart Study Desk</div><h1>THARUN</h1></div>
+    <div class="gear" onclick="openSettings()">&#9881;</div>
+  </div>
 
-  <div class="card">
-    <div class="label">ESP32 address</div>
-    <div class="row">
-      <input id="espIp" placeholder="e.g. 192.168.1.42">
-      <button class="btn" onclick="saveIp()">Connect</button>
-      <span id="connStatus" style="font-size:13px;color:var(--muted)"><span class="status-dot" style="background:var(--muted)"></span>not connected</span>
+  <div class="tabs">
+    <div class="tab active" data-tab="status" onclick="switchTab('status')">Status</div>
+    <div class="tab" data-tab="led" onclick="switchTab('led')">Ambient LED</div>
+    <div class="tab" data-tab="stats" onclick="switchTab('stats')">Stats</div>
+    <div class="tab" data-tab="schedule" onclick="switchTab('schedule')">Timetable</div>
+  </div>
+
+  <!-- STATUS PAGE -->
+  <div class="page active" id="page-status">
+    <div class="card" style="text-align:center">
+      <div class="ring" id="ring">--</div>
+      <div class="label">Subject</div>
+      <div class="row" style="justify-content:center;flex-wrap:wrap" id="subjectButtons"></div>
+      <div style="margin-top:10px"><button class="btn" onclick="playPause()">Play / Pause</button></div>
+    </div>
+    <div class="card">
+      <div class="label">Charger</div>
+      <div style="font-size:20px;margin-bottom:10px" id="relayState">--</div>
+      <button class="btn" onclick="setRelay(true)">Turn on</button>
+      <button class="btn ghost" onclick="setRelay(false)">Turn off</button>
+    </div>
+    <div class="card">
+      <div class="label">Environment</div>
+      <div class="row" style="justify-content:space-between">
+        <div><div class="big-number" id="temp" style="font-size:28px">--</div><div class="label">temp</div></div>
+        <div><div class="big-number" id="hum" style="font-size:28px">--</div><div class="label">humidity</div></div>
+        <div><div class="big-number" id="room" style="font-size:28px">--</div><div class="label">room light</div></div>
+      </div>
+      <div style="margin-top:10px;font-size:13px;color:var(--muted)" id="presence">--</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="big-number" id="examDays" style="font-size:48px">--</div>
+      <div class="label">days to exam</div>
     </div>
   </div>
 
-  <div class="card" style="text-align:center">
-    <div class="ring" id="ring">--</div>
-    <div class="label">Current subject</div>
-    <div style="font-size:20px" id="subject">--</div>
-  </div>
-
-  <div class="card">
-    <div class="label">Charger socket</div>
-    <div style="font-size:22px;margin-bottom:14px" id="relayState">--</div>
-    <button class="btn" onclick="setRelay(true)">Turn on</button>
-    <button class="btn off" onclick="setRelay(false)">Turn off</button>
-  </div>
-
-  <div class="card">
-    <div class="label">Environment</div>
-    <div class="row" style="justify-content:space-between">
-      <div><div class="big-number" id="temp" style="font-size:32px">--</div><div class="label">temperature</div></div>
-      <div><div class="big-number" id="hum" style="font-size:32px">--</div><div class="label">humidity</div></div>
+  <!-- LED PAGE -->
+  <div class="page" id="page-led">
+    <div class="card">
+      <div class="label">Power</div>
+      <button class="btn" id="ledOnBtn" onclick="toggleLedOn()">Toggle On/Off</button>
     </div>
-    <div style="margin-top:12px;font-size:14px;color:var(--muted)" id="presence">--</div>
+    <div class="card">
+      <div class="label">Mode</div>
+      <button class="btn" id="presetModeBtn" onclick="setSmooth(false)">Preset color</button>
+      <button class="btn" id="smoothModeBtn" onclick="setSmooth(true)">Smooth transition</button>
+    </div>
+    <div class="card">
+      <div class="label">Color palette</div>
+      <div id="palette"></div>
+    </div>
+    <div class="card">
+      <div class="label">Brightness</div>
+      <input type="range" min="0" max="100" id="brightSlider" oninput="setBrightness(this.value)">
+      <div id="brightVal" style="color:var(--muted);font-size:13px">--%</div>
+    </div>
   </div>
 
-  <div class="card" style="text-align:center">
-    <div class="big-number" id="examDays" style="font-size:56px">--</div>
-    <div class="label">days remaining to your exam</div>
+  <!-- STATS PAGE -->
+  <div class="page" id="page-stats">
+    <div class="tabs">
+      <div class="tab active" data-period="today" onclick="switchPeriod('today')">Today</div>
+      <div class="tab" data-period="week" onclick="switchPeriod('week')">Week</div>
+      <div class="tab" data-period="month" onclick="switchPeriod('month')">Month</div>
+      <div class="tab" data-period="allTime" onclick="switchPeriod('allTime')">All time</div>
+    </div>
+    <div class="card"><table id="statsTable"><tr><th>Subject</th><th>Minutes</th></tr></table></div>
   </div>
 
-  <div class="card">
-    <div class="label">Study hours today</div>
-    <table id="studyTable"><tr><th>Subject</th><th>Minutes</th></tr></table>
+  <!-- SCHEDULE PAGE -->
+  <div class="page" id="page-schedule">
+    <div class="card">
+      <div class="label">Timetable (reminder beeps)</div>
+      <div id="scheduleRows"></div>
+      <button class="btn ghost" onclick="addScheduleRow()">+ Add row</button>
+      <button class="btn" onclick="saveSchedule()">Save timetable</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal-bg" id="settingsModal">
+    <div class="modal">
+      <h1 style="font-size:18px;margin-bottom:14px">Settings</h1>
+      <div class="label">ESP32 address</div>
+      <div class="row" style="margin-bottom:14px">
+        <input id="espIp" placeholder="192.168.1.42" style="flex:1">
+        <span id="connStatus" style="font-size:12px;color:var(--muted)"><span class="status-dot" style="background:var(--muted)"></span>--</span>
+      </div>
+      <button class="btn" onclick="saveIp()">Save & connect</button>
+      <button class="btn ghost" onclick="closeSettings()">Close</button>
+    </div>
   </div>
 
 <script>
 let espIp = localStorage.getItem('espIp') || '';
+let currentPeriod = 'today';
+const subjects = ['ACC', 'BS LAW', 'QA', 'ECO'];
+const presetHex = ['#FF9329','#FFFFFF','#FF0000','#00FF00','#0000FF','#FFB400','#A020F0','#00FFFF','#000000'];
+
 document.getElementById('espIp').value = espIp;
 
-function saveIp() {
-  espIp = document.getElementById('espIp').value.trim();
-  localStorage.setItem('espIp', espIp);
-  refresh();
+// build subject buttons
+const sb = document.getElementById('subjectButtons');
+subjects.forEach((name, i) => {
+  const b = document.createElement('button');
+  b.className = 'btn ghost'; b.textContent = name; b.style.fontSize='12px';
+  b.onclick = () => selectSubject(i);
+  b.id = 'subjBtn' + i;
+  sb.appendChild(b);
+});
+
+// build palette swatches
+const pal = document.getElementById('palette');
+presetHex.forEach((hex, i) => {
+  const s = document.createElement('div');
+  s.className = 'swatch'; s.style.background = hex; s.id = 'swatch' + i;
+  s.style.border = (hex === '#000000') ? '2px solid #555' : '2px solid transparent';
+  s.onclick = () => setPreset(i);
+  pal.appendChild(s);
+});
+
+function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
+function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
+function saveIp() { espIp = document.getElementById('espIp').value.trim(); localStorage.setItem('espIp', espIp); closeSettings(); refresh(); refreshLed(); refreshStats(); refreshSchedule(); }
+
+function switchTab(name) {
+  document.querySelectorAll('.tabs')[0].querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (name === 'led') refreshLed();
+  if (name === 'stats') refreshStats();
+  if (name === 'schedule') refreshSchedule();
+}
+
+function switchPeriod(p) {
+  currentPeriod = p;
+  document.querySelectorAll('#page-stats .tabs .tab').forEach(t => t.classList.toggle('active', t.dataset.period === p));
+  refreshStats();
+}
+
+async function api(path) {
+  if (!espIp) { alert('Set the ESP32 address in Settings first'); return null; }
+  try {
+    const res = await fetch('http://' + espIp + path);
+    document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--teal)"></span>connected';
+    return await res.json();
+  } catch (e) {
+    document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--red)"></span>unreachable';
+    return null;
+  }
 }
 
 function ringColor(state) {
@@ -87,44 +203,89 @@ function ringColor(state) {
 }
 
 async function refresh() {
-  if (!espIp) return;
-  try {
-    const res = await fetch('http://' + espIp + '/api/status');
-    const data = await res.json();
-
-    document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--teal)"></span>connected';
-
-    const ring = document.getElementById('ring');
-    ring.textContent = data.state;
-    ring.style.borderColor = ringColor(data.state);
-    ring.style.color = ringColor(data.state);
-
-    document.getElementById('subject').textContent = data.subject;
-    document.getElementById('relayState').textContent = data.relay ? 'ON' : 'OFF';
-    document.getElementById('temp').textContent = data.temperature + '°';
-    document.getElementById('hum').textContent = data.humidity + '%';
-    document.getElementById('examDays').textContent = data.examDays;
-    document.getElementById('presence').textContent =
-      (data.present ? 'Seated at desk' : 'Away') + ' · Phone ' + (data.phoneOnPad ? 'on pad' : 'away');
-
-    const table = document.getElementById('studyTable');
-    table.innerHTML = '<tr><th>Subject</th><th>Minutes</th></tr>';
-    data.subjects.forEach(s => {
-      table.innerHTML += `<tr><td>${s.name}</td><td>${s.minutes}</td></tr>`;
-    });
-  } catch (e) {
-    document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--red)"></span>can\'t reach ESP32';
+  const data = await api('/api/status');
+  if (!data) return;
+  const ring = document.getElementById('ring');
+  ring.textContent = data.state;
+  ring.style.borderColor = ringColor(data.state);
+  ring.style.color = ringColor(data.state);
+  for (let i = 0; i < subjects.length; i++) {
+    document.getElementById('subjBtn' + i).className = 'btn ' + (i === data.subjectIndex ? '' : 'ghost');
   }
+  document.getElementById('relayState').textContent = data.relay ? 'ON' : 'OFF';
+  document.getElementById('temp').textContent = data.temperature + '°';
+  document.getElementById('hum').textContent = data.humidity + '%';
+  document.getElementById('room').textContent = data.roomBrightness + '%';
+  document.getElementById('examDays').textContent = data.examDays;
+  document.getElementById('presence').textContent = (data.present ? 'Seated' : 'Away') + ' · Phone(info) ' + (data.phoneOnPad ? 'on pad' : 'away') + ' · ' + data.distance + 'cm · PIR ' + (data.pir ? 'motion' : 'still');
 }
 
-async function setRelay(on) {
-  if (!espIp) return alert('Enter the ESP32 address first');
-  await fetch('http://' + espIp + '/api/relay/' + (on ? 'on' : 'off'));
-  refresh();
+async function setRelay(on) { await api('/api/relay/' + (on ? 'on' : 'off')); refresh(); }
+async function selectSubject(i) { await api('/api/session/subject?index=' + i); refresh(); }
+async function playPause() { await api('/api/session/play'); refresh(); }
+
+async function refreshLed() {
+  const d = await api('/api/led');
+  if (!d) return;
+  document.getElementById('ledOnBtn').className = 'btn ' + (d.on ? 'active' : 'ghost');
+  document.getElementById('presetModeBtn').className = 'btn ' + (!d.smooth ? 'active' : 'ghost');
+  document.getElementById('smoothModeBtn').className = 'btn ' + (d.smooth ? 'active' : 'ghost');
+  document.querySelectorAll('.swatch').forEach((s, i) => s.classList.toggle('sel', i === d.preset));
+  document.getElementById('brightSlider').value = d.brightness;
+  document.getElementById('brightVal').textContent = d.brightness + '%';
+}
+async function toggleLedOn() { const d = await api('/api/led'); if (!d) return; await api('/api/led/set?on=' + (d.on ? 0 : 1)); refreshLed(); }
+async function setSmooth(v) { await api('/api/led/set?smooth=' + (v ? 1 : 0)); refreshLed(); }
+async function setPreset(i) { await api('/api/led/set?preset=' + i); refreshLed(); }
+async function setBrightness(v) { document.getElementById('brightVal').textContent = v + '%'; await api('/api/led/set?brightness=' + v); }
+
+async function refreshStats() {
+  const d = await api('/api/history');
+  if (!d) return;
+  const table = document.getElementById('statsTable');
+  table.innerHTML = '<tr><th>Subject</th><th>Minutes</th><th>Hours</th></tr>';
+  const arr = d[currentPeriod];
+  d.subjects.forEach((name, i) => {
+    table.innerHTML += `<tr><td>${name}</td><td>${arr[i]}</td><td>${(arr[i]/60).toFixed(1)}</td></tr>`;
+  });
+}
+
+async function refreshSchedule() {
+  const d = await api('/api/schedule');
+  if (!d) return;
+  const container = document.getElementById('scheduleRows');
+  container.innerHTML = '';
+  d.forEach(entry => addScheduleRow(entry.hour, entry.minute, entry.subject));
+}
+
+function addScheduleRow(h, m, subjIdx) {
+  const container = document.getElementById('scheduleRows');
+  const row = document.createElement('div');
+  row.className = 'subj-row';
+  const hh = h !== undefined ? String(h).padStart(2,'0') : '09';
+  const mm = m !== undefined ? String(m).padStart(2,'0') : '00';
+  let options = subjects.map((s, i) => `<option value="${i}" ${i === subjIdx ? 'selected' : ''}>${s}</option>`).join('');
+  row.innerHTML = `<input type="time" value="${hh}:${mm}" class="sched-time"><select class="sched-subj">${options}</select><button class="btn ghost" onclick="this.parentElement.remove()">x</button>`;
+  container.appendChild(row);
+}
+
+async function saveSchedule() {
+  const rows = document.querySelectorAll('#scheduleRows .subj-row');
+  let entries = [];
+  rows.forEach(r => {
+    const time = r.querySelector('.sched-time').value; // HH:MM
+    const subj = r.querySelector('.sched-subj').value;
+    entries.push(time + ':' + subj);
+  });
+  await api('/api/schedule/set?entries=' + encodeURIComponent(entries.join(',')));
+  alert('Timetable saved');
 }
 
 refresh();
-setInterval(refresh, 2000);
+setInterval(() => {
+  refresh();
+  if (document.getElementById('page-led').classList.contains('active')) refreshLed();
+}, 2000);
 </script>
 </body>
 </html>
