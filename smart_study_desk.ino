@@ -72,8 +72,8 @@ Preferences prefs;
 
 const char* apSSID = "StudyDesk";
 const char* apPassword = "study1234";
-const char* hotspotSSID = "YOUR_PHONE_HOTSPOT_NAME";     // <-- fill in your phone's hotspot name
-const char* hotspotPassword = "YOUR_PHONE_HOTSPOT_PASSWORD"; // <-- fill in its password
+const char* hotspotSSID = "Home Wi-Fi";
+const char* hotspotPassword = "12348765";
 const char* profileName = "CA THARUN";
 
 // ---------------- Subjects ----------------
@@ -652,7 +652,38 @@ void setupWebServer() {
   server.on("/exam", handleExam);
   server.on("/relay/on", [](){ setRelay(true); server.sendHeader("Location", "/"); server.send(303); });
   server.on("/relay/off", [](){ setRelay(false); server.sendHeader("Location", "/"); server.send(303); });
+
+  // JSON API — used by the standalone index.html dashboard
+  server.on("/api/status", HTTP_GET, handleApiStatus);
+  server.on("/api/relay/on", HTTP_GET, [](){ setRelay(true); sendCORS(); server.send(200, "application/json", "{\"relay\":true}"); });
+  server.on("/api/relay/off", HTTP_GET, [](){ setRelay(false); sendCORS(); server.send(200, "application/json", "{\"relay\":false}"); });
+  server.onNotFound([](){ sendCORS(); server.send(404, "text/plain", "Not found"); });
+
   server.begin();
+}
+
+void sendCORS() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+}
+
+void handleApiStatus() {
+  sendCORS();
+  String json = "{";
+  json += "\"state\":\"" + String(sessionStateName(currentState)) + "\",";
+  json += "\"subject\":\"" + String(subjectNames[currentSubject]) + "\",";
+  json += "\"relay\":" + String(relayOn ? "true" : "false") + ",";
+  json += "\"present\":" + String(isPresent() ? "true" : "false") + ",";
+  json += "\"phoneOnPad\":" + String(isPhoneOnPad() ? "true" : "false") + ",";
+  json += "\"temperature\":" + String(dht.readTemperature(), 1) + ",";
+  json += "\"humidity\":" + String(dht.readHumidity(), 1) + ",";
+  json += "\"examDays\":" + String(examDaysRemaining) + ",";
+  json += "\"subjects\":[";
+  for (int i = 0; i < NUM_SUBJECTS; i++) {
+    json += "{\"name\":\"" + String(subjectNames[i]) + "\",\"minutes\":" + String(studySeconds[i] / 60) + "}";
+    if (i < NUM_SUBJECTS - 1) json += ",";
+  }
+  json += "]}";
+  server.send(200, "application/json", json);
 }
 
 String pageWrapper(String title, String activePage, String body) {
