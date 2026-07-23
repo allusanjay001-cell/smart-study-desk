@@ -166,7 +166,16 @@ presetHex.forEach((hex, i) => {
 
 function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
 function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
-function saveIp() { espIp = document.getElementById('espIp').value.trim(); localStorage.setItem('espIp', espIp); closeSettings(); refresh(); refreshLed(); refreshStats(); refreshSchedule(); }
+
+function saveIp() { 
+  espIp = document.getElementById('espIp').value.trim(); 
+  localStorage.setItem('espIp', espIp); 
+  closeSettings(); 
+  refresh(); 
+  refreshLed(); 
+  refreshStats(); 
+  refreshSchedule(); 
+}
 
 function switchTab(name) {
   document.querySelectorAll('.tabs')[0].querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
@@ -184,7 +193,11 @@ function switchPeriod(p) {
 }
 
 async function api(path) {
-  if (!espIp) { alert('Set the ESP32 address in Settings first'); return null; }
+  // Silent fail if no IP is provided — open settings instead of firing infinite alerts
+  if (!espIp) { 
+    openSettings();
+    return null; 
+  }
   try {
     const res = await fetch('http://' + espIp + path);
     document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--teal)"></span>connected';
@@ -281,10 +294,19 @@ async function saveSchedule() {
   alert('Timetable saved');
 }
 
-refresh();
-setInterval(() => {
+// Initial Run
+if (!espIp) {
+  openSettings();
+} else {
   refresh();
-  if (document.getElementById('page-led').classList.contains('active')) refreshLed();
+}
+
+// Polling interval (only runs API calls if IP is present)
+setInterval(() => {
+  if (espIp) {
+    refresh();
+    if (document.getElementById('page-led').classList.contains('active')) refreshLed();
+  }
 }, 2000);
 </script>
 </body>
