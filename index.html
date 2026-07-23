@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Study Desk</title>
+<style>
+  :root{--ink:#1B2430;--panel:#232F3E;--brass:#C9A227;--teal:#3E6259;--parchment:#F2EFE9;--red:#C1443A;--blue:#3E6B8A;--muted:#8B94A3;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--parchment);font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;max-width:520px;margin:0 auto;}
+  h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:26px;margin:0 0 4px 0;}
+  .eyebrow{color:var(--brass);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;}
+  .card{background:var(--panel);border-radius:10px;padding:20px 24px;margin-bottom:16px;border:1px solid #2E3B4C;}
+  .big-number{font-family:'Courier New',monospace;font-size:48px;color:var(--brass);line-height:1;}
+  .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .ring{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:14px;border:4px solid var(--muted);margin:0 auto 12px auto;transition:border-color .3s,color .3s;}
+  .btn{display:inline-block;background:var(--teal);color:var(--parchment);border:1px solid #4A7168;padding:12px 22px;border-radius:6px;font-size:14px;margin-right:10px;cursor:pointer;}
+  .btn.off{background:transparent;color:var(--muted);border:1px solid #3A4757;}
+  table{width:100%;border-collapse:collapse;}
+  td,th{padding:8px;text-align:left;border-bottom:1px solid #2E3B4C;font-size:14px;}
+  th{color:var(--muted);font-weight:400;text-transform:uppercase;font-size:11px;letter-spacing:1px;}
+  input{background:var(--ink);border:1px solid #3A4757;color:var(--parchment);padding:8px 10px;border-radius:6px;font-size:13px;width:160px;}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+</style>
+</head>
+<body>
+  <div class="eyebrow">Smart Study Desk &middot; CA THARUN</div>
+  <h1>Desk control</h1>
+
+  <div class="card">
+    <div class="label">ESP32 address</div>
+    <div class="row">
+      <input id="espIp" placeholder="e.g. 192.168.1.42">
+      <button class="btn" onclick="saveIp()">Connect</button>
+      <span id="connStatus" style="font-size:13px;color:var(--muted)"><span class="status-dot" style="background:var(--muted)"></span>not connected</span>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center">
+    <div class="ring" id="ring">--</div>
+    <div class="label">Current subject</div>
+    <div style="font-size:20px" id="subject">--</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Charger socket</div>
+    <div style="font-size:22px;margin-bottom:14px" id="relayState">--</div>
+    <button class="btn" onclick="setRelay(true)">Turn on</button>
+    <button class="btn off" onclick="setRelay(false)">Turn off</button>
+  </div>
+
+  <div class="card">
+    <div class="label">Environment</div>
+    <div class="row" style="justify-content:space-between">
+      <div><div class="big-number" id="temp" style="font-size:32px">--</div><div class="label">temperature</div></div>
+      <div><div class="big-number" id="hum" style="font-size:32px">--</div><div class="label">humidity</div></div>
+    </div>
+    <div style="margin-top:12px;font-size:14px;color:var(--muted)" id="presence">--</div>
+  </div>
+
+  <div class="card" style="text-align:center">
+    <div class="big-number" id="examDays" style="font-size:56px">--</div>
+    <div class="label">days remaining to your exam</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Study hours today</div>
+    <table id="studyTable"><tr><th>Subject</th><th>Minutes</th></tr></table>
+  </div>
+
+<script>
+let espIp = localStorage.getItem('espIp') || '';
+document.getElementById('espIp').value = espIp;
+
+function saveIp() {
+  espIp = document.getElementById('espIp').value.trim();
+  localStorage.setItem('espIp', espIp);
+  refresh();
+}
+
+function ringColor(state) {
+  if (state === 'STUDYING') return 'var(--teal)';
+  if (state === 'DISTRACTED') return 'var(--red)';
+  if (state === 'BREAK') return 'var(--blue)';
+  return 'var(--muted)';
+}
+
+async function refresh() {
+  if (!espIp) return;
+  try {
+    const res = await fetch('http://' + espIp + '/api/status');
+    const data = await res.json();
+
+    document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--teal)"></span>connected';
+
+    const ring = document.getElementById('ring');
+    ring.textContent = data.state;
+    ring.style.borderColor = ringColor(data.state);
+    ring.style.color = ringColor(data.state);
+
+    document.getElementById('subject').textContent = data.subject;
+    document.getElementById('relayState').textContent = data.relay ? 'ON' : 'OFF';
+    document.getElementById('temp').textContent = data.temperature + '°';
+    document.getElementById('hum').textContent = data.humidity + '%';
+    document.getElementById('examDays').textContent = data.examDays;
+    document.getElementById('presence').textContent =
+      (data.present ? 'Seated at desk' : 'Away') + ' · Phone ' + (data.phoneOnPad ? 'on pad' : 'away');
+
+    const table = document.getElementById('studyTable');
+    table.innerHTML = '<tr><th>Subject</th><th>Minutes</th></tr>';
+    data.subjects.forEach(s => {
+      table.innerHTML += `<tr><td>${s.name}</td><td>${s.minutes}</td></tr>`;
+    });
+  } catch (e) {
+    document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--red)"></span>can\'t reach ESP32';
+  }
+}
+
+async function setRelay(on) {
+  if (!espIp) return alert('Enter the ESP32 address first');
+  await fetch('http://' + espIp + '/api/relay/' + (on ? 'on' : 'off'));
+  refresh();
+}
+
+refresh();
+setInterval(refresh, 2000);
+</script>
+</body>
+</html>
