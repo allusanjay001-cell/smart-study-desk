@@ -5,39 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Smart Study Desk</title>
 <style>
-  :root{--ink:#14191F;--panel:#1E2530;--brass:#D4A947;--teal:#4A8577;--parchment:#F2EFE9;--red:#D1574C;--blue:#5B8FB9;--muted:#7C8798;}
+  :root{
+    --ink:#12161C; --panel:#1B222C; --panel2:#202834; --brass:#D9AE55; --brass-dim:#8C7440;
+    --teal:#4F9384; --parchment:#F3F0E9; --red:#DB6259; --blue:#5F97C4; --muted:#7C8798; --line:#2A3442;
+  }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--ink);color:var(--parchment);font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:20px;max-width:520px;margin:0 auto;}
-  h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:26px;margin:0;}
-  .eyebrow{color:var(--brass);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
-  .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
-  .gear{background:var(--panel);border:1px solid #2E3B4C;color:var(--muted);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:18px;}
-  .tabs{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;}
-  .tab{background:var(--panel);border:1px solid #2E3B4C;color:var(--muted);padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer;white-space:nowrap;}
-  .tab.active{color:var(--brass);border-color:var(--brass);}
-  .page{display:none;} .page.active{display:block;}
-  .card{background:var(--panel);border-radius:10px;padding:18px 20px;margin-bottom:14px;border:1px solid #2E3B4C;}
-  .big-number{font-family:'Courier New',monospace;font-size:44px;color:var(--brass);line-height:1;}
-  .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
-  .ring{width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:13px;border:4px solid var(--muted);margin:0 auto 10px auto;transition:.3s;}
-  .btn{display:inline-block;background:var(--teal);color:var(--parchment);border:1px solid #4A7168;padding:10px 18px;border-radius:6px;font-size:13px;margin-right:8px;margin-bottom:8px;cursor:pointer;}
-  .btn.ghost{background:transparent;color:var(--muted);border:1px solid #3A4757;}
-  .btn.active{background:var(--brass);color:var(--ink);border-color:var(--brass);}
-  table{width:100%;border-collapse:collapse;} td,th{padding:8px;text-align:left;border-bottom:1px solid #2E3B4C;font-size:13px;}
-  th{color:var(--muted);font-weight:400;text-transform:uppercase;font-size:10px;letter-spacing:1px;}
-  input,select{background:var(--ink);border:1px solid #3A4757;color:var(--parchment);padding:8px 10px;border-radius:6px;font-size:13px;}
+  body{margin:0;background:var(--ink);color:var(--parchment);font-family:-apple-system,Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:520px;margin:0 auto;padding:22px 18px 60px;}
+  h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:27px;margin:0;letter-spacing:.3px;}
+  .eyebrow{color:var(--brass);font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px;}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;}
+  .gear{background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:9px 13px;cursor:pointer;font-size:17px;transition:.15s;}
+  .gear:hover{color:var(--brass);border-color:var(--brass-dim);}
+  .tabs{display:flex;gap:5px;margin-bottom:18px;overflow-x:auto;padding-bottom:2px;}
+  .tab{background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:9px 15px;border-radius:8px;font-size:12.5px;cursor:pointer;white-space:nowrap;letter-spacing:.2px;transition:.15s;}
+  .tab.active{color:var(--ink);background:var(--brass);border-color:var(--brass);font-weight:600;}
+  .page{display:none;} .page.active{display:block;animation:fade .2s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+  .card{background:var(--panel);border-radius:12px;padding:18px 20px;margin-bottom:13px;border:1px solid var(--line);}
+  .card-row{display:flex;gap:12px;}
+  .card-row .card{flex:1;}
+  .big-number{font-family:'Courier New',monospace;font-size:40px;color:var(--brass);line-height:1;}
+  .label{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:7px;}
+  .ring{width:104px;height:104px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:13px;letter-spacing:.5px;border:3px solid var(--muted);margin:0 auto 12px auto;transition:.35s;}
+  .btn{display:inline-block;background:var(--teal);color:var(--parchment);border:1px solid #5CA795;padding:10px 18px;border-radius:8px;font-size:13px;margin-right:8px;margin-bottom:8px;cursor:pointer;transition:.15s;font-family:inherit;}
+  .btn:hover{filter:brightness(1.1);}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);}
+  .btn.ghost:hover{color:var(--parchment);border-color:var(--muted);}
+  .btn.active{background:var(--brass);color:var(--ink);border-color:var(--brass);font-weight:600;}
+  .btn.danger{background:transparent;color:var(--red);border:1px solid #6b3835;}
+  table{width:100%;border-collapse:collapse;} td,th{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);font-size:13px;}
+  th{color:var(--muted);font-weight:400;text-transform:uppercase;font-size:9.5px;letter-spacing:1px;}
+  input,select{background:var(--ink);border:1px solid var(--line);color:var(--parchment);padding:9px 11px;border-radius:7px;font-size:13px;font-family:inherit;}
   .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-  .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
-  .swatch{width:32px;height:32px;border-radius:6px;cursor:pointer;border:2px solid transparent;display:inline-block;margin:2px;}
-  .swatch.sel{border-color:var(--brass);}
-  .modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:10;}
+  .status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;}
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);align-items:center;justify-content:center;z-index:10;}
   .modal-bg.show{display:flex;}
-  .modal{background:var(--panel);border-radius:10px;padding:24px;max-width:400px;width:90%;border:1px solid #2E3B4C;}
-  .subj-row{display:flex;gap:6px;margin-bottom:6px;}
-  input[type=range]{width:100%;}
+  .modal{background:var(--panel);border-radius:14px;padding:26px;max-width:400px;width:90%;border:1px solid var(--line);}
+  .subj-row{display:flex;gap:6px;margin-bottom:7px;}
+  input[type=range]{width:100%;accent-color:var(--brass);}
+  .goal-bar{height:20px;background:var(--ink);border-radius:10px;overflow:hidden;border:1px solid var(--line);margin:8px 0;}
+  .goal-fill{height:100%;background:linear-gradient(90deg,var(--brass-dim),var(--brass));transition:width .4s ease;}
+  .stat-icon-row{display:flex;gap:14px;align-items:center;}
+  .icon-pill{display:flex;align-items:center;gap:8px;background:var(--panel2);border-radius:9px;padding:10px 14px;flex:1;}
+  .icon-pill .dot{width:9px;height:9px;border-radius:50%;}
+  /* Color pad */
+  #svCanvas{border-radius:10px;touch-action:none;cursor:crosshair;display:block;width:100%;height:180px;}
+  #hueCanvas{border-radius:8px;touch-action:none;cursor:pointer;display:block;width:100%;height:18px;margin-top:12px;}
+  .pad-wrap{position:relative;}
+  #svDot{position:absolute;width:16px;height:16px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.4);pointer-events:none;transform:translate(-8px,-8px);}
+  #hueDot{position:absolute;top:12px;width:6px;height:24px;background:#fff;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.4);pointer-events:none;transform:translateX(-3px);}
+  .swatchmini{width:26px;height:26px;border-radius:6px;cursor:pointer;border:2px solid transparent;display:inline-block;margin:3px;}
+  .swatchmini.sel{border-color:var(--brass);}
 </style>
 </head>
 <body>
+<div class="wrap">
   <div class="topbar">
     <div><div class="eyebrow">Smart Study Desk</div><h1>THARUN</h1></div>
     <div class="gear" onclick="openSettings()">&#9881;</div>
@@ -58,46 +81,78 @@
       <div class="row" style="justify-content:center;flex-wrap:wrap" id="subjectButtons"></div>
       <div style="margin-top:10px"><button class="btn" onclick="playPause()">Play / Pause</button></div>
     </div>
+
     <div class="card">
-      <div class="label">Charger</div>
-      <div style="font-size:20px;margin-bottom:10px" id="relayState">--</div>
-      <button class="btn" onclick="setRelay(true)">Turn on</button>
-      <button class="btn ghost" onclick="setRelay(false)">Turn off</button>
+      <div class="label">Daily goal</div>
+      <div class="goal-bar"><div class="goal-fill" id="goalFill" style="width:0%"></div></div>
+      <div style="font-size:13px;color:var(--muted)" id="goalText">0.0 / 10 hrs today</div>
     </div>
+
+    <div class="card-row">
+      <div class="card" style="text-align:center">
+        <div class="big-number" id="examDays" style="font-size:38px">--</div>
+        <div class="label">days to exam</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:20px;margin-bottom:6px" id="relayState">--</div>
+        <div class="label">charger</div>
+        <button class="btn" style="font-size:11px;padding:6px 10px" onclick="setRelay(true)">On</button>
+        <button class="btn ghost" style="font-size:11px;padding:6px 10px" onclick="setRelay(false)">Off</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stat-icon-row">
+        <div class="icon-pill"><span class="dot" id="muteDot" style="background:var(--muted)"></span><span id="muteText" style="font-size:12.5px">--</span></div>
+        <div class="icon-pill"><span class="dot" id="wifiDot" style="background:var(--muted)"></span><span id="wifiText" style="font-size:12.5px">--</span></div>
+      </div>
+      <button class="btn ghost" style="margin-top:10px;font-size:12px" onclick="toggleMute()">Toggle mute</button>
+    </div>
+
     <div class="card">
       <div class="label">Environment</div>
       <div class="row" style="justify-content:space-between">
-        <div><div class="big-number" id="temp" style="font-size:28px">--</div><div class="label">temp</div></div>
-        <div><div class="big-number" id="hum" style="font-size:28px">--</div><div class="label">humidity</div></div>
-        <div><div class="big-number" id="room" style="font-size:28px">--</div><div class="label">room light</div></div>
+        <div><div class="big-number" id="temp" style="font-size:26px">--</div><div class="label">temp</div></div>
+        <div><div class="big-number" id="hum" style="font-size:26px">--</div><div class="label">humidity</div></div>
+        <div><div class="big-number" id="room" style="font-size:26px">--</div><div class="label">room light</div></div>
       </div>
-      <div style="margin-top:10px;font-size:13px;color:var(--muted)" id="presence">--</div>
-    </div>
-    <div class="card" style="text-align:center">
-      <div class="big-number" id="examDays" style="font-size:48px">--</div>
-      <div class="label">days to exam</div>
+      <div style="margin-top:10px;font-size:12.5px;color:var(--muted)" id="presence">--</div>
     </div>
   </div>
 
   <!-- LED PAGE -->
   <div class="page" id="page-led">
     <div class="card">
-      <div class="label">Power</div>
-      <button class="btn" id="ledOnBtn" onclick="toggleLedOn()">Toggle On/Off</button>
+      <div class="row" style="justify-content:space-between">
+        <div class="label" style="margin:0">Power</div>
+        <button class="btn" id="ledOnBtn" onclick="toggleLedOn()">Toggle On/Off</button>
+      </div>
     </div>
+
     <div class="card">
-      <div class="label">Mode</div>
-      <button class="btn" id="presetModeBtn" onclick="setSmooth(false)">Preset color</button>
-      <button class="btn" id="smoothModeBtn" onclick="setSmooth(true)">Smooth transition</button>
-    </div>
-    <div class="card">
-      <div class="label">Color palette</div>
+      <div class="label">Color pad</div>
+      <div class="pad-wrap">
+        <canvas id="svCanvas"></canvas>
+        <div id="svDot"></div>
+      </div>
+      <div class="pad-wrap">
+        <canvas id="hueCanvas"></canvas>
+        <div id="hueDot"></div>
+      </div>
+      <div class="label" style="margin-top:12px">Quick presets</div>
       <div id="palette"></div>
     </div>
+
+    <div class="card">
+      <div class="label">Mode</div>
+      <button class="btn" id="presetModeBtn" onclick="setSmooth(false)">Solid</button>
+      <button class="btn" id="smoothModeBtn" onclick="setSmooth(true)">Smooth cycle</button>
+    </div>
+
     <div class="card">
       <div class="label">Brightness</div>
       <input type="range" min="0" max="100" id="brightSlider" oninput="setBrightness(this.value)">
-      <div id="brightVal" style="color:var(--muted);font-size:13px">--%</div>
+      <div id="brightVal" style="color:var(--muted);font-size:13px;margin-top:4px">--%</div>
     </div>
   </div>
 
@@ -109,7 +164,7 @@
       <div class="tab" data-period="month" onclick="switchPeriod('month')">Month</div>
       <div class="tab" data-period="allTime" onclick="switchPeriod('allTime')">All time</div>
     </div>
-    <div class="card"><table id="statsTable"><tr><th>Subject</th><th>Minutes</th></tr></table></div>
+    <div class="card"><table id="statsTable"><tr><th>Subject</th><th>Minutes</th><th>Hours</th></tr></table></div>
   </div>
 
   <!-- SCHEDULE PAGE -->
@@ -121,44 +176,46 @@
       <button class="btn" onclick="saveSchedule()">Save timetable</button>
     </div>
   </div>
+</div>
 
-  <!-- SETTINGS MODAL -->
-  <div class="modal-bg" id="settingsModal">
-    <div class="modal">
-      <h1 style="font-size:18px;margin-bottom:14px">Settings</h1>
-      <div class="label">ESP32 address</div>
-      <div class="row" style="margin-bottom:14px">
-        <input id="espIp" placeholder="192.168.1.42" style="flex:1">
-        <span id="connStatus" style="font-size:12px;color:var(--muted)"><span class="status-dot" style="background:var(--muted)"></span>--</span>
-      </div>
-      <button class="btn" onclick="saveIp()">Save & connect</button>
-      <button class="btn ghost" onclick="closeSettings()">Close</button>
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <h1 style="font-size:18px;margin-bottom:14px;font-family:Georgia,serif;font-weight:400">Settings</h1>
+    <div class="label">ESP32 address</div>
+    <div class="row" style="margin-bottom:16px">
+      <input id="espIp" placeholder="192.168.1.42" style="flex:1">
     </div>
+    <div class="row" style="margin-bottom:16px">
+      <span id="connStatus" style="font-size:12px;color:var(--muted)"><span class="status-dot" style="background:var(--muted)"></span>--</span>
+    </div>
+    <button class="btn" onclick="saveIp()">Save & connect</button>
+    <button class="btn ghost" onclick="closeSettings()">Close</button>
   </div>
+</div>
 
 <script>
 let espIp = localStorage.getItem('espIp') || '';
 let currentPeriod = 'today';
 const subjects = ['ACC', 'BS LAW', 'QA', 'ECO'];
+// Order matches firmware presetColors[] exactly - index 0-8
 const presetHex = ['#FF9329','#FFFFFF','#FF0000','#00FF00','#0000FF','#FFB400','#A020F0','#00FFFF','#000000'];
 
 document.getElementById('espIp').value = espIp;
 
-// build subject buttons
 const sb = document.getElementById('subjectButtons');
 subjects.forEach((name, i) => {
   const b = document.createElement('button');
-  b.className = 'btn ghost'; b.textContent = name; b.style.fontSize='12px';
+  b.className = 'btn ghost'; b.textContent = name; b.style.fontSize = '12px';
   b.onclick = () => selectSubject(i);
   b.id = 'subjBtn' + i;
   sb.appendChild(b);
 });
 
-// build palette swatches
 const pal = document.getElementById('palette');
 presetHex.forEach((hex, i) => {
   const s = document.createElement('div');
-  s.className = 'swatch'; s.style.background = hex; s.id = 'swatch' + i;
+  s.className = 'swatchmini'; s.style.background = hex; s.id = 'swatch' + i;
   s.style.border = (hex === '#000000') ? '2px solid #555' : '2px solid transparent';
   s.onclick = () => setPreset(i);
   pal.appendChild(s);
@@ -166,22 +223,18 @@ presetHex.forEach((hex, i) => {
 
 function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
 function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
-
-function saveIp() { 
-  espIp = document.getElementById('espIp').value.trim(); 
-  localStorage.setItem('espIp', espIp); 
-  closeSettings(); 
-  refresh(); 
-  refreshLed(); 
-  refreshStats(); 
-  refreshSchedule(); 
+function saveIp() {
+  espIp = document.getElementById('espIp').value.trim();
+  localStorage.setItem('espIp', espIp);
+  closeSettings();
+  refresh(); refreshLed(); refreshStats(); refreshSchedule();
 }
 
 function switchTab(name) {
-  document.querySelectorAll('.tabs')[0].querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.wrap > .tabs')[0].querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  if (name === 'led') refreshLed();
+  if (name === 'led') { refreshLed(); setTimeout(initColorPad, 50); }
   if (name === 'stats') refreshStats();
   if (name === 'schedule') refreshSchedule();
 }
@@ -193,11 +246,7 @@ function switchPeriod(p) {
 }
 
 async function api(path) {
-  // Silent fail if no IP is provided — open settings instead of firing infinite alerts
-  if (!espIp) { 
-    openSettings();
-    return null; 
-  }
+  if (!espIp) { openSettings(); return null; }
   try {
     const res = await fetch('http://' + espIp + path);
     document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--teal)"></span>connected';
@@ -211,7 +260,7 @@ async function api(path) {
 function ringColor(state) {
   if (state === 'STUDYING') return 'var(--teal)';
   if (state === 'DISTRACTED') return 'var(--red)';
-  if (state === 'BREAK') return 'var(--blue)';
+  if (state === 'PAUSED') return 'var(--blue)';
   return 'var(--muted)';
 }
 
@@ -222,6 +271,7 @@ async function refresh() {
   ring.textContent = data.state;
   ring.style.borderColor = ringColor(data.state);
   ring.style.color = ringColor(data.state);
+
   for (let i = 0; i < subjects.length; i++) {
     document.getElementById('subjBtn' + i).className = 'btn ' + (i === data.subjectIndex ? '' : 'ghost');
   }
@@ -230,12 +280,23 @@ async function refresh() {
   document.getElementById('hum').textContent = data.humidity + '%';
   document.getElementById('room').textContent = data.roomBrightness + '%';
   document.getElementById('examDays').textContent = data.examDays;
-  document.getElementById('presence').textContent = (data.present ? 'Seated' : 'Away') + ' · Phone(info) ' + (data.phoneOnPad ? 'on pad' : 'away') + ' · ' + data.distance + 'cm · PIR ' + (data.pir ? 'motion' : 'still');
+  document.getElementById('presence').textContent = (data.present ? 'Seated at desk' : 'Away') + ' · ' + data.distance + 'cm · PIR ' + (data.pir ? 'motion' : 'still');
+
+  document.getElementById('muteDot').style.background = data.dnd ? 'var(--red)' : 'var(--teal)';
+  document.getElementById('muteText').textContent = data.dnd ? 'Muted' : 'Sound on';
+  document.getElementById('wifiDot').style.background = data.wifiConnected ? 'var(--teal)' : 'var(--red)';
+  document.getElementById('wifiText').textContent = data.wifiConnected ? 'WiFi connected' : 'WiFi offline';
+
+  const totalMin = data.subjects.reduce((a, s) => a + s.minutes, 0);
+  const hrs = totalMin / 60;
+  document.getElementById('goalFill').style.width = Math.min(100, (hrs / 10) * 100) + '%';
+  document.getElementById('goalText').textContent = hrs.toFixed(1) + ' / 10 hrs today';
 }
 
 async function setRelay(on) { await api('/api/relay/' + (on ? 'on' : 'off')); refresh(); }
 async function selectSubject(i) { await api('/api/session/subject?index=' + i); refresh(); }
 async function playPause() { await api('/api/session/play'); refresh(); }
+async function toggleMute() { await api('/api/mute/toggle'); refresh(); }
 
 async function refreshLed() {
   const d = await api('/api/led');
@@ -243,14 +304,24 @@ async function refreshLed() {
   document.getElementById('ledOnBtn').className = 'btn ' + (d.on ? 'active' : 'ghost');
   document.getElementById('presetModeBtn').className = 'btn ' + (!d.smooth ? 'active' : 'ghost');
   document.getElementById('smoothModeBtn').className = 'btn ' + (d.smooth ? 'active' : 'ghost');
-  document.querySelectorAll('.swatch').forEach((s, i) => s.classList.toggle('sel', i === d.preset));
+  document.querySelectorAll('.swatchmini').forEach((s, i) => s.classList.toggle('sel', !d.custom && !d.smooth && i === d.preset));
   document.getElementById('brightSlider').value = d.brightness;
   document.getElementById('brightVal').textContent = d.brightness + '%';
+
+  // Position the pad dot to match whatever's actually live right now
+  if (svCtx) {
+    const r = d.custom ? d.customR : d.liveR, g = d.custom ? d.customG : d.liveG, b = d.custom ? d.customB : d.liveB;
+    const hsv = rgbToHsv(r, g, b);
+    currentHue = hsv.h;
+    drawHue();
+    positionDots(hsv.s, hsv.v, hsv.h);
+  }
 }
 async function toggleLedOn() { const d = await api('/api/led'); if (!d) return; await api('/api/led/set?on=' + (d.on ? 0 : 1)); refreshLed(); }
 async function setSmooth(v) { await api('/api/led/set?smooth=' + (v ? 1 : 0)); refreshLed(); }
 async function setPreset(i) { await api('/api/led/set?preset=' + i); refreshLed(); }
 async function setBrightness(v) { document.getElementById('brightVal').textContent = v + '%'; await api('/api/led/set?brightness=' + v); }
+async function setCustomColor(r, g, b) { await api(`/api/led/custom?r=${r}&g=${g}&b=${b}`); }
 
 async function refreshStats() {
   const d = await api('/api/history');
@@ -270,7 +341,6 @@ async function refreshSchedule() {
   container.innerHTML = '';
   d.forEach(entry => addScheduleRow(entry.hour, entry.minute, entry.subject));
 }
-
 function addScheduleRow(h, m, subjIdx) {
   const container = document.getElementById('scheduleRows');
   const row = document.createElement('div');
@@ -281,27 +351,104 @@ function addScheduleRow(h, m, subjIdx) {
   row.innerHTML = `<input type="time" value="${hh}:${mm}" class="sched-time"><select class="sched-subj">${options}</select><button class="btn ghost" onclick="this.parentElement.remove()">x</button>`;
   container.appendChild(row);
 }
-
 async function saveSchedule() {
   const rows = document.querySelectorAll('#scheduleRows .subj-row');
   let entries = [];
-  rows.forEach(r => {
-    const time = r.querySelector('.sched-time').value; // HH:MM
-    const subj = r.querySelector('.sched-subj').value;
-    entries.push(time + ':' + subj);
-  });
+  rows.forEach(r => entries.push(r.querySelector('.sched-time').value + ':' + r.querySelector('.sched-subj').value));
   await api('/api/schedule/set?entries=' + encodeURIComponent(entries.join(',')));
   alert('Timetable saved');
 }
 
-// Initial Run
-if (!espIp) {
-  openSettings();
-} else {
-  refresh();
+// ---------------- Interactive color pad ----------------
+let svCtx = null, hueCtx = null, currentHue = 0;
+
+function hsvToRgb(h, s, v) {
+  let c = v * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = v - c, r,g,b;
+  if (h < 60) [r,g,b] = [c,x,0]; else if (h < 120) [r,g,b] = [x,c,0];
+  else if (h < 180) [r,g,b] = [0,c,x]; else if (h < 240) [r,g,b] = [0,x,c];
+  else if (h < 300) [r,g,b] = [x,0,c]; else [r,g,b] = [c,0,x];
+  return { r: Math.round((r+m)*255), g: Math.round((g+m)*255), b: Math.round((b+m)*255) };
+}
+function rgbToHsv(r, g, b) {
+  r/=255; g/=255; b/=255;
+  let max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min, h=0;
+  if (d !== 0) {
+    if (max===r) h = 60*(((g-b)/d)%6);
+    else if (max===g) h = 60*((b-r)/d+2);
+    else h = 60*((r-g)/d+4);
+  }
+  if (h < 0) h += 360;
+  return { h, s: max===0?0:d/max, v: max };
 }
 
-// Polling interval (only runs API calls if IP is present)
+function drawSV() {
+  if (!svCtx) return;
+  const w = svCtx.canvas.width, h = svCtx.canvas.height;
+  const rgb = hsvToRgb(currentHue, 1, 1);
+  svCtx.fillStyle = `rgb(${rgb.r},${rgb.g},${rgb.b})`;
+  svCtx.fillRect(0, 0, w, h);
+  let g1 = svCtx.createLinearGradient(0,0,w,0);
+  g1.addColorStop(0,'rgba(255,255,255,1)'); g1.addColorStop(1,'rgba(255,255,255,0)');
+  svCtx.fillStyle = g1; svCtx.fillRect(0,0,w,h);
+  let g2 = svCtx.createLinearGradient(0,0,0,h);
+  g2.addColorStop(0,'rgba(0,0,0,0)'); g2.addColorStop(1,'rgba(0,0,0,1)');
+  svCtx.fillStyle = g2; svCtx.fillRect(0,0,w,h);
+}
+function drawHue() {
+  if (!hueCtx) return;
+  const w = hueCtx.canvas.width, h = hueCtx.canvas.height;
+  let g = hueCtx.createLinearGradient(0,0,w,0);
+  for (let i = 0; i <= 6; i++) g.addColorStop(i/6, `hsl(${i*60},100%,50%)`);
+  hueCtx.fillStyle = g; hueCtx.fillRect(0,0,w,h);
+}
+function positionDots(s, v, h) {
+  const svCanvas = document.getElementById('svCanvas'), hueCanvas = document.getElementById('hueCanvas');
+  const svDot = document.getElementById('svDot'), hueDot = document.getElementById('hueDot');
+  svDot.style.left = (s * svCanvas.offsetWidth) + 'px';
+  svDot.style.top = ((1 - v) * svCanvas.offsetHeight) + 'px';
+  hueDot.style.left = ((h / 360) * hueCanvas.offsetWidth) + 'px';
+}
+
+let dragTimeout = null;
+function initColorPad() {
+  const svCanvas = document.getElementById('svCanvas'), hueCanvas = document.getElementById('hueCanvas');
+  svCanvas.width = svCanvas.offsetWidth; svCanvas.height = svCanvas.offsetHeight;
+  hueCanvas.width = hueCanvas.offsetWidth; hueCanvas.height = hueCanvas.offsetHeight;
+  svCtx = svCanvas.getContext('2d'); hueCtx = hueCanvas.getContext('2d');
+  drawSV(); drawHue();
+
+  function svPick(e, commit) {
+    const rect = svCanvas.getBoundingClientRect();
+    const x = Math.min(Math.max((e.clientX ?? e.touches[0].clientX) - rect.left, 0), rect.width);
+    const y = Math.min(Math.max((e.clientY ?? e.touches[0].clientY) - rect.top, 0), rect.height);
+    const s = x / rect.width, v = 1 - y / rect.height;
+    document.getElementById('svDot').style.left = x + 'px';
+    document.getElementById('svDot').style.top = y + 'px';
+    const rgb = hsvToRgb(currentHue, s, v);
+    if (commit) throttledSend(rgb);
+  }
+  function huePick(e, commit) {
+    const rect = hueCanvas.getBoundingClientRect();
+    const x = Math.min(Math.max((e.clientX ?? e.touches[0].clientX) - rect.left, 0), rect.width);
+    currentHue = (x / rect.width) * 360;
+    document.getElementById('hueDot').style.left = x + 'px';
+    drawSV();
+    if (commit) { const dot = document.getElementById('svDot'); svPick({clientX: dot.getBoundingClientRect().left + 1, clientY: dot.getBoundingClientRect().top + 1}, true); }
+  }
+  function throttledSend(rgb) {
+    clearTimeout(dragTimeout);
+    dragTimeout = setTimeout(() => setCustomColor(rgb.r, rgb.g, rgb.b), 80);
+  }
+
+  let draggingSV = false, draggingHue = false;
+  svCanvas.onpointerdown = e => { draggingSV = true; svPick(e, true); };
+  window.addEventListener('pointermove', e => { if (draggingSV) svPick(e, true); if (draggingHue) huePick(e, true); });
+  window.addEventListener('pointerup', () => { draggingSV = false; draggingHue = false; });
+  hueCanvas.onpointerdown = e => { draggingHue = true; huePick(e, true); };
+}
+
+// ---------------- Init ----------------
+if (!espIp) { openSettings(); } else { refresh(); }
 setInterval(() => {
   if (espIp) {
     refresh();
