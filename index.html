@@ -245,11 +245,20 @@ function switchPeriod(p) {
   refreshStats();
 }
 
+// NOTE: previously this called res.json() unconditionally, so a missing
+// route on the ESP32 (404, plain-text body) threw a generic parse error
+// that looked identical to "device unreachable" - you couldn't tell the
+// difference from the UI. Now a bad/missing route is logged to the
+// console so it's obvious it's a firmware-side problem, not a WiFi one.
 async function api(path) {
   if (!espIp) { openSettings(); return null; }
   try {
     const res = await fetch('http://' + espIp + path);
     document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--teal)"></span>connected';
+    if (!res.ok) {
+      console.warn('ESP32 responded but route failed:', path, res.status);
+      return null;
+    }
     return await res.json();
   } catch (e) {
     document.getElementById('connStatus').innerHTML = '<span class="status-dot" style="background:var(--red)"></span>unreachable';
